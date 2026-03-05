@@ -1,14 +1,97 @@
 {% extends 'tasks/base.html' %}
 {% load static %}
 {% block content %}
-<form action="" method='POST'>
-    {% csrf_token %}
-    {%  if mode == "create" %}
-        {{ form.as_p }}
-        <input type="submit" name="Submit">
-    {% else %}
-        {{ form.status }}
-        <input type="submit" name="Submit">
-    {% endif %}
-</form>
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+            <h4 class="mb-4 fw-bold">
+                {% if mode == "create" %}
+                    Create Task
+                {% else %}
+                    Update Task Status
+                {% endif %}
+            </h4>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if mode == "create" %}
+
+                <!-- TITLE -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Title</label>
+                    {{ form.title }}
+                </div>
+
+                <!-- DESCRIPTION -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Description</label>
+                    {{ form.description }}
+                </div>
+
+                <!-- PRIORITY ONLY (Status removed intentionally) -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Priority</label>
+                    {{ form.priority }}
+                </div>
+
+                <!-- ASSIGN -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Assign To</label>
+                    {{ form.assigned_to }}
+                </div>
+
+                <!-- DEADLINE -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Deadline</label>
+                    {{ form.deadline }}
+                </div>
+
+                <!-- INFO MESSAGE -->
+                <div class="alert alert-info py-2">
+                    This task will be sent for Super Admin approval after creation.
+                </div>
+
+                <hr>
+
+                <!-- ATTACHMENTS -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Attachments</label>
+                    <input type="file" name="files" multiple class="form-control">
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success px-4">
+                        Create Task
+                    </button>
+                </div>
+
+                {% else %}
+
+                <!-- UPDATE MODE (Employee can change only status) -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Update Status</label>
+                    {{ form.status }}
+                </div>
+
+                <div class="alert alert-warning py-2">
+                    Only approved tasks can be updated.
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary px-4">
+                        Update Status
+                    </button>
+                </div>
+
+                {% endif %}
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
 {% endblock %}

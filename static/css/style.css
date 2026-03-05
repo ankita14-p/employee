@@ -1,6 +1,6 @@
- body {
+body {
             background-color: #f8f9fb;
-            margin:20px;
+            margin:50px;
         }
         .card {
             border-radius: 12px;
@@ -50,12 +50,6 @@
             height: 8px;
         }
 
-        .cta-box {
-            background: linear-gradient(135deg, #f0f9ff, #eef2ff);
-            border-radius: 14px;
-            padding: 25px;
-            border: 1px solid #dbeafe;
-        }
 /* Department dropdown button */
 .department-btn {
     background-color: #212529;
@@ -89,5 +83,3 @@
 .department-menu a {
     text-decoration: none;
 }
-
-

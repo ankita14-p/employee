@@ -1,0 +1,37 @@
+body{
+        margin: 2rem;
+    }
+[data-bs-theme="dark"] .companyno .stat-card
+{
+    color: white !important;
+    background-color: rgb(40, 39, 39) !important;
+
+}
+[data-bs-theme="dark"] .dept-card
+    {
+        color: white !important;
+        background-color: rgb(40, 39, 39) !important;
+    
+    }
+/* DARK MODE DROPDOWN FIX */
+[data-bs-theme="dark"] .dropdown-menu {
+    background-color: #2b3035;   /* Bootstrap dark surface */
+    border-color: #444;
+}
+
+[data-bs-theme="dark"] .dropdown-item {
+    color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .dropdown-item:hover,
+[data-bs-theme="dark"] .dropdown-item:focus {
+    background-color: #495057;
+    color: #ffffff !important;
+}
+
+/* Fix dropdown button text too */
+[data-bs-theme="dark"] .department-btn {
+    background-color: #212529;
+    color: #fff;
+    border-color: #444;
+}

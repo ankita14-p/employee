@@ -1,61 +1,153 @@
-
 {% extends 'tasks/base.html' %}
 {% load static %}
 
 {% block content %}
 {% include 'tasks/navbar.html' %}
 {% include 'tasks/status.html' %}
- <!-- My Tasks -->
-    <div class="card p-4">
-        <h6 class="fw-bold mb-0">My Tasks</h6>
-        <small class="text-muted mb-3 d-block">
-            View and manage your assigned tasks
-        </small>
+<form method="GET" class="m-3">
+    <div class="d-flex align-items-center justify-content-end gap-2">
 
-        <!-- Tabs -->
-        <div class="d-flex gap-2 mb-4">
-            <span class="badge rounded-pill bg-primary">
-  All {{ total_task }}
-</span>
-<span class="badge rounded-pill bg-secondary">
-  Pending {{ pending }}
-</span>
-<span class="badge rounded-pill bg-warning text-dark">
-  In Progress {{ in_progress }}
-</span>
-<span class="badge rounded-pill bg-success">
-  Done {{ completed }}
-</span>
+        <label class="fw-semibold mb-0">Status:</label>
+        {{ myFilter.form.status }}
 
+        <label class="fw-semibold mb-0">Approval:</label>
+        {{ myFilter.form.approval_status }}
+
+        <button type="submit" class="btn btn-primary btn-sm">
+            Apply
+        </button>
+
+        <a href="{% url 'superadmin_dashboard' %}" class="btn btn-secondary btn-sm">
+            Reset
+        </a>
+
+    </div>
+</form>
+
+<div class="card p-4 m-3">
+    <h6 class="fw-bold mb-0">My Tasks</h6>
+    <small class="text-muted mb-3 d-block">
+        View and manage your assigned tasks
+    </small>
+
+    <!-- Summary -->
+    <div class="d-flex gap-2 mb-4">
+        <span class="badge rounded-pill bg-primary">All {{ total_task }}</span>
+        <span class="badge rounded-pill bg-secondary">Pending {{ pending }}</span>
+        <span class="badge rounded-pill bg-warning text-dark">In Progress {{ in_progress }}</span>
+        <span class="badge rounded-pill bg-success">Done {{ completed }}</span>
+    </div>
+
+    <!-- TASK LIST -->
+    {% for task in tasks %}
+    <div class="card p-3 mb-3">
+
+        <div class="d-flex justify-content-between">
+            <!-- LEFT SIDE -->
+            <div class="flex-grow-1">
+                <h6 class="fw-bold mb-1">{{ task.title }}</h6>
+
+                <p class="text-muted mb-2">
+                    {{ task.description }}
+                </p>
+
+                <!-- Attachments -->
+                <small class="fw-bold">Attachments:</small>
+
+                {% for file in task.attachments.all %}
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span>{{ file.file.name|cut:"task_docs/" }}</span>
+
+                    {% with file.file.name|lower as fname %}
+                        {% if ".pdf" in fname %}
+                            <a href="{{ file.file.url }}" target="_blank"
+                               class="btn btn-sm btn-outline-primary">
+                                View
+                            </a>
+                        {% else %}
+                            <a href="{{ file.file.url }}" download
+                               class="btn btn-sm btn-outline-success">
+                                Download
+                            </a>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                {% empty %}
+                    <small class="text-muted">No files</small>
+                {% endfor %}
+
+                <!-- Deadline & Work Status -->
+                <div class="mt-3">
+                    <small class="text-muted">📅 {{ task.deadline }}</small>
+
+                    <span class="badge bg-info text-dark ms-2">
+                        {{ task.status }}
+                    </span>
+
+                 
+                </div>
+
+                <!-- Approval Message -->
+                <div class="mt-2">
+                    {% if task.approval_status == "APPROVED" %}
+                        <small class="text-success">
+                            ✔ Approved by {{ task.approved_by.username }}
+                        </small>
+                    {% elif task.approval_status == "REJECTED" %}
+                        <small class="text-danger">
+                            ✖ Task rejected by Super Admin
+                        </small>
+                    {% else %}
+                        <small class="text-warning">
+                            ⏳ Waiting for Approval
+                        </small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="mt-3 text-end">
+                <span class="badge
+                    {% if task.priority == 'HIGH' %} bg-danger
+                    {% elif task.priority == 'MEDIUM' %} bg-warning text-dark
+                    {% else %} bg-secondary
+                    {% endif %}
+                ">
+                    {{ task.priority }}
+                </span>
+
+                <a class="btn btn-warning btn-sm text-black ms-2"
+                   href="{% url 'update_status' task.id %}">
+                   Update
+                </a>
+            </div>
         </div>
 
-        <!-- Task Card -->
-        <div class="card p-3">
-            {% for task in tasks %}
-            <div class="d-flex justify-content-between">
-                <div>
-                    <h6 class="fw-bold mb-1">{{task.title}}</h6>
-                    <p class="text-muted mb-2">
-                      {{task.description}}
-                    </p>
-                    <small class="text-muted">
-                        📅 {{task.deadline}}
-                    </small>
-                    <span class="status-badge bg-primary text-white ms-2">
-                       {{task.status}}
-                    </span>
-                    <span><a class='btn btn-warning status-badge text-black ms-2'  href="{% url 'update_status' task.id %}">Update</a></span>
-                </div>
-                {% endfor %}
-                {% for task in tasks %}
-                <div>
-                    <span class="priority-high">{{task.priority}}</span>
-                </div>
+        <!-- COMMENTS -->
+        <div class="mt-3">
+            <button class="btn btn-sm btn-outline-primary"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#showComment{{ task.id }}">
+                Show Comments ({{ task.comments.count }})
+            </button>
+        </div>
+
+        <div class="collapse mt-2" id="showComment{{ task.id }}">
+            <div class="card card-body">
+                {% for c in task.comments.all %}
+                    <div class="border-bottom mb-2 pb-1">
+                        <small class="fw-bold">{{ c.created_by.username }}</small>
+                        <small class="text-muted"> • {{ c.created_at }}</small>
+                        <div>{{ c.comment }}</div>
+                    </div>
+                {% empty %}
+                    <small class="text-muted">No comments yet</small>
                 {% endfor %}
             </div>
         </div>
 
     </div>
-
+    {% endfor %}
 </div>
+
 {% endblock %}

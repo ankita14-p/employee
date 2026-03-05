@@ -11,6 +11,8 @@
     <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     
@@ -19,5 +21,30 @@
  
     {% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        const toggleBtn = document.getElementById("themeToggle");
+const html = document.documentElement;
+
+// Load saved theme
+const savedTheme = localStorage.getItem("theme") || "light";
+html.setAttribute("data-bs-theme", savedTheme);
+updateButtonText(savedTheme);
+
+toggleBtn.addEventListener("click", () => {
+    let currentTheme = html.getAttribute("data-bs-theme");
+    let newTheme = currentTheme === "dark" ? "light" : "dark";
+
+    html.setAttribute("data-bs-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+    updateButtonText(newTheme);
+});
+
+function updateButtonText(theme) {
+    toggleBtn.textContent =
+        theme === "dark" ? "☀️" : "🌙";
+}
+        
+    </script>
 </body>
 </html>
