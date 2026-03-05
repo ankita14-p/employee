@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class UserProfile(models.Model):
     ROLE_CHOICES=(
         (Roles.ADMIN,'ADMIN'),
-        (Roles.MANAGER,'MANAGER'),
+        (Roles.MD,'MANAGING DIRECTOR'),
         (Roles.DEPARTMENT,'DEPARTMENT')
     )
     user=models.OneToOneField(User,on_delete=models.CASCADE,related_name='userprofile')
